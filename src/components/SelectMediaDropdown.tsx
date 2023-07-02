@@ -4,7 +4,7 @@ import {FaMicrophone, FaChevronDown, FaVideo, FaVideoSlash} from "react-icons/fa
 import {PiMicrophoneSlashFill, PiMicrophoneFill} from "react-icons/pi"
 import {Track} from "livekit-client";
 
-const SelectMediaDropdown: FC = ({
+const SelectMediaDropdown = ({
                                    kind, source, initialSelection, onActiveDeviceChange,
                                    onDeviceListChange,
                                    onDeviceSelectError,
