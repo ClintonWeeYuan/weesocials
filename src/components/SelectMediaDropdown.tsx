@@ -3,14 +3,15 @@ import {useMaybeRoomContext, useMediaDeviceSelect,useTrackToggle} from "@livekit
 import {FaMicrophone, FaChevronDown, FaVideo, FaVideoSlash} from "react-icons/fa"
 import {PiMicrophoneSlashFill, PiMicrophoneFill} from "react-icons/pi"
 import {Track} from "livekit-client";
+import type {MediaDeviceSelectProps} from "@livekit/components-react";
+import type {ToggleSource} from "@livekit/components-core";
 
-const SelectMediaDropdown = ({
-                                   kind, source, initialSelection, onActiveDeviceChange,
-                                   onDeviceListChange,
-                                   onDeviceSelectError,
-                                   exactMatch,
-                                   ...props
-                                 }) => {
+interface Props extends MediaDeviceSelectProps{
+  source: ToggleSource,
+  onDeviceSelectError?: (e: Error) => void;
+  exactMatch?: boolean;
+}
+const SelectMediaDropdown : FC<Props> = ({ kind , source, initialSelection, onActiveDeviceChange, onDeviceListChange, onDeviceSelectError, exactMatch, ...props}) => {
   const room = useMaybeRoomContext();
   const {devices, activeDeviceId, setActiveMediaDevice, className} = useMediaDeviceSelect({
     kind,
@@ -37,7 +38,7 @@ const SelectMediaDropdown = ({
 
   const handleActiveDeviceChange = async (deviceId: string) => {
     try {
-      await setActiveMediaDevice(deviceId, {exact: exactMatch});
+      await setActiveMediaDevice(deviceId, {exact: true});
     } catch (e) {
       if (e instanceof Error) {
         onDeviceSelectError?.(e);
