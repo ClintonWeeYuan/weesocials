@@ -2,32 +2,30 @@ import {
   AudioVisualizer,
   GridLayout,
   LiveKitRoom,
-  ParticipantName,
   RoomAudioRenderer,
   TrackContext,
-  useConnectionQualityIndicator,
   useToken,
   useTracks,
-  VideoTrack,
-  MediaDeviceSelect
+  VideoTrack
 } from '@livekit/components-react';
-import {ConnectionQuality, createLocalVideoTrack, LocalVideoTrack, Room, Track} from 'livekit-client';
-import {HTMLAttributes, ReactElement, useEffect, useState} from 'react';
+import {createLocalVideoTrack, LocalVideoTrack, Room, Track} from 'livekit-client';
+import {ReactElement, useEffect, useState} from 'react';
 import {VideoRenderer} from '@livekit/react-core';
 import '@livekit/components-styles';
 import {FaBolt} from "react-icons/fa";
 import {NextPageWithLayout} from "@/src/pages/_app";
 import Layout from "@/src/components/Layout";
 import SelectMediaDropdown from "@/src/components/SelectMediaDropdown";
+import {LuLogOut} from "react-icons/lu"
 
 
-const CustomizeExample: NextPageWithLayout = () => {
+const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
   // const searchParams = new URLSearchParams(window.location.search);
   const storedUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL as string;
   const params = typeof window !== 'undefined' ? new URLSearchParams(location.search) : null;
   const roomName = params?.get('room') ?? 'test-room';
-  const userIdentity = params?.get('user') ?? 'test-identity';
+  const userIdentity = params?.get('user') ?? 'Unknown';
   const token = useToken(process.env.NEXT_PUBLIC_LK_TOKEN_ENDPOINT, roomName, {
     userInfo: {
       identity: userIdentity,
@@ -93,7 +91,6 @@ const CustomizeExample: NextPageWithLayout = () => {
   };
 
   const connectToRoom = async () => {
-    console.log("HELLO")
     if (videoTrack) {
       videoTrack.stop();
     }
@@ -153,6 +150,7 @@ const CustomizeExample: NextPageWithLayout = () => {
 
   const [connect, setConnect] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+
   const handleDisconnect = () => {
     setConnect(false);
     setIsConnected(false);
@@ -160,7 +158,7 @@ const CustomizeExample: NextPageWithLayout = () => {
 
 
   return (
-    <div className="flex flex-col justify-center items-center relative min-h-screen max-w-screen-sm "
+    <div className="flex flex-col justify-center items-center relative min-h-screen max-w-screen-sm"
          data-lk-theme="default">
       <h1 className="text-5xl text-black p-4">
         Wee Socials
@@ -184,16 +182,20 @@ const CustomizeExample: NextPageWithLayout = () => {
         {/* Render a custom Stage component once connected */}
         {isConnected && (
           <div className="">
-            <Stage/>
+            <Stage setConnect={setConnect}/>
             {/*<ControlBar className="relative w-full" />*/}
           </div>
         )}
       </LiveKitRoom>
+      <div className="">
+      <input className="input input-bordered mr-2 text-black" disabled value={`http://localhost:3000/room?room=${roomName}`}/>
+      <button className="btn btn-primary top-0 right-0" onClick={() => {navigator.clipboard.writeText(`http://localhost:3000/room?room=${roomName}`)}}>Invite</button>
+      </div>
     </div>
   );
 };
 
-export function Stage() {
+export function Stage({setConnect}) {
   const tracks = useTracks([
     {source: Track.Source.Camera, withPlaceholder: true},
     // {source: Track.Source.ScreenShare, withPlaceholder: false},
@@ -201,70 +203,43 @@ export function Stage() {
   console.log(tracks)
   return (
     <>
-      <div className="bg-red-500">
-        {/*<GridLayout className="bg-green-500" tracks={tracks}>*/}
-        {/*  <TrackContext.Consumer>*/}
-          {/*  {(track) =>*/}
-          {/*    track && (*/}
-          {tracks.map((track, index) => (
-            <div key={index} className="bg-blue-500">
-              <div>
-                <VideoTrack {...track} />
-              </div>
-              <div className="flex justify-center relative">
-                {/*<div className="flex h-20 w-20 bg-red-500">*/}
-                {/*</div>*/}
-                {/* Overwrite styles: By passing class names, we can easily overwrite/extend the existing styles. */}
-                {/* In addition, we can still specify a style attribute and further customize the styles. */}
-                {/*<ParticipantName*/}
-                {/*  className="text-black mt-5"*/}
-                {/*/>*/}
-                {/* Custom components: Here we replace the provided <ConnectionQualityIndicator />  with our own implementation. */}
-                {/*<UserDefinedConnectionQualityIndicator />*/}
-              </div>
-              <div className="bg-yellow-500 w-full flex">
-                <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
-                <SelectMediaDropdown kind="videoinput" source={Track.Source.Camera}/>
-              </div>
-              {/*<MediaDeviceSelect kind="audioinput" onActiveDeviceChange={() => {console.log("Hello")}}/>*/}
+      <div className="bg-white">
+        <GridLayout className="" tracks={tracks}>
+          <TrackContext.Consumer>
+            {(track) =>
+              track && (
 
-            </div>
-          ))}
-            {/*  )*/}
-            {/*}*/}
-          {/*</TrackContext.Consumer>*/}
-        {/*</GridLayout>*/}
+                <div className="">
+                  <div className="relative">
+                    <div className="w-16 h-16 absolute top-0 right-0 z-10"><AudioVisualizer
+                      participant={track.participant}/>
+                    </div>
+                    <VideoTrack {...track} />
+                  </div>
+                  <div className="flex justify-center relative">
+                  </div>
+                </div>
+
+              )
+            }
+          </TrackContext.Consumer>
+        </GridLayout>
+        <div className="w-full flex justify-between py-2">
+          <div className="flex">
+            <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
+            <SelectMediaDropdown kind="videoinput" source={Track.Source.Camera}/>
+          </div>
+          <button className="btn btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/></button>
+        </div>
+
       </div>
     </>
   );
 }
 
-export function UserDefinedConnectionQualityIndicator(props: HTMLAttributes<HTMLSpanElement>) {
-  /**
-   *  We use the same React hook that is used internally to build our own component.
-   *  By using this hook, we inherit all the state management and logic and can focus on our implementation.
-   */
-  const {quality} = useConnectionQualityIndicator();
-
-  function qualityToText(quality: ConnectionQuality): string {
-    switch (quality) {
-      case ConnectionQuality.Unknown:
-        return 'No idea';
-      case ConnectionQuality.Poor:
-        return 'Poor';
-      case ConnectionQuality.Good:
-        return 'Good';
-      case ConnectionQuality.Excellent:
-        return 'Excellent';
-    }
-  }
-
-  return <span {...props}> {qualityToText(quality)} </span>;
-}
-
-CustomizeExample.getLayout = function useLayout(page: ReactElement) {
+RoomPage.getLayout = function useLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
 };
 
 
-export default CustomizeExample
+export default RoomPage

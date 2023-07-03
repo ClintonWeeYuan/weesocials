@@ -1,17 +1,26 @@
 import {FC, useEffect} from "react"
-import {useMaybeRoomContext, useMediaDeviceSelect,useTrackToggle} from "@livekit/components-react";
-import {FaMicrophone, FaChevronDown, FaVideo, FaVideoSlash} from "react-icons/fa"
-import {PiMicrophoneSlashFill, PiMicrophoneFill} from "react-icons/pi"
-import {Track} from "livekit-client";
 import type {MediaDeviceSelectProps} from "@livekit/components-react";
+import {useMaybeRoomContext, useMediaDeviceSelect, useTrackToggle} from "@livekit/components-react";
+import {FaChevronDown, FaMicrophone, FaVideo, FaVideoSlash} from "react-icons/fa"
+import {PiMicrophoneSlashFill} from "react-icons/pi"
 import type {ToggleSource} from "@livekit/components-core";
 
-interface Props extends MediaDeviceSelectProps{
+interface Props extends MediaDeviceSelectProps {
   source: ToggleSource,
   onDeviceSelectError?: (e: Error) => void;
   exactMatch?: boolean;
 }
-const SelectMediaDropdown : FC<Props> = ({ kind , source, initialSelection, onActiveDeviceChange, onDeviceListChange, onDeviceSelectError, exactMatch, ...props}) => {
+
+const SelectMediaDropdown: FC<Props> = ({
+                                          kind,
+                                          source,
+                                          initialSelection,
+                                          onActiveDeviceChange,
+                                          onDeviceListChange,
+                                          onDeviceSelectError,
+                                          exactMatch,
+                                          ...props
+                                        }) => {
   const room = useMaybeRoomContext();
   const {devices, activeDeviceId, setActiveMediaDevice, className} = useMediaDeviceSelect({
     kind,
@@ -53,25 +62,28 @@ const SelectMediaDropdown : FC<Props> = ({ kind , source, initialSelection, onAc
 
   return (
     <>
-      <button type="button" className="btn m-1" onClick={buttonProps.onClick ? buttonProps.onClick : () => {}}>{enabled ? enabledIcon : disabledIcon}</button>
-      <div className="dropdown">
-        <label tabIndex={0} className="btn m-1"><FaChevronDown/></label>
-        <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
-          {devices.map((device) => (
-            <li
-              className={`text-w text-black ${device.deviceId === activeDeviceId && "text-blue-500"}`}
-              key={device.deviceId}
-              id={device.deviceId}
-              // data-lk-active={device.deviceId === activeDeviceId}
-              aria-selected={device.deviceId === activeDeviceId}
-              role="option"
-            >
+      <div className="mr-4 flex">
+        <button type="button" className="btn rounded-r-none" onClick={buttonProps.onClick ? buttonProps.onClick : () => {
+        }}>{enabled ? enabledIcon : disabledIcon}</button>
+        <div className="dropdown">
+          <label tabIndex={0} className="btn rounded-l-none"><FaChevronDown className="text-lg"/></label>
+          <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
+            {devices.map((device) => (
+              <li
+                className={`text-w text-black ${device.deviceId === activeDeviceId && "text-blue-500"}`}
+                key={device.deviceId}
+                id={device.deviceId}
+                // data-lk-active={device.deviceId === activeDeviceId}
+                aria-selected={device.deviceId === activeDeviceId}
+                role="option"
+              >
               <span className="text-xs" onClick={() => handleActiveDeviceChange(device.deviceId)}>
                 {device.label.substring(0, 40) + "..."}
               </span>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </>
   );
