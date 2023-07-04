@@ -13,7 +13,7 @@ const Layout: FC<Props> = ({ children }) => {
         <title>ChambersLab</title>
         <link rel="shortcut icon" href="/chamberslab-logo-only.png" />
       </Head>
-      <div className="min-h-screen flex justify-center items-center">{children}</div>
+      <div className="flex flex-col min-h-screen bg-base-200">{children}</div>
     </div>
   );
 };

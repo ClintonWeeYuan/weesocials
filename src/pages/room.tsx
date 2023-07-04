@@ -1,23 +1,21 @@
 import {
   AudioVisualizer,
-  GridLayout,
   LiveKitRoom,
   RoomAudioRenderer,
-  TrackContext,
   useToken,
   useTracks,
   VideoTrack
 } from '@livekit/components-react';
-import {createLocalVideoTrack, LocalVideoTrack, Room, Track} from 'livekit-client';
-import {ReactElement, useEffect, useState} from 'react';
+import {createLocalVideoTrack, LocalParticipant, LocalVideoTrack, RemoteParticipant, Room, Track} from 'livekit-client';
+import {FC, ReactElement, useEffect, useState} from 'react';
 import {VideoRenderer} from '@livekit/react-core';
 import '@livekit/components-styles';
 import {FaBolt} from "react-icons/fa";
 import {NextPageWithLayout} from "@/src/pages/_app";
-import Layout from "@/src/components/Layout";
 import SelectMediaDropdown from "@/src/components/SelectMediaDropdown";
 import {LuLogOut} from "react-icons/lu"
-
+import Topbar from "@/src/components/room/Topbar";
+import Chatbox from "@/src/components/room/Chatbox"
 
 const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
@@ -158,44 +156,69 @@ const RoomPage: NextPageWithLayout = () => {
 
 
   return (
-    <div className="flex flex-col justify-center items-center relative min-h-screen max-w-screen-sm"
-         data-lk-theme="default">
-      <h1 className="text-5xl text-black p-4">
-        Wee Socials
-      </h1>
-      {!isConnected && (
-        <button className="btn btn-primary" onClick={() => setConnect(!connect)}>
-          Connect <FaBolt/>
-        </button>
-      )}
-      <LiveKitRoom
-        room={room}
-        token={token}
-        serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
-        connect={connect}
-        onConnected={() => setIsConnected(true)}
-        onDisconnected={handleDisconnect}
-        audio={true}
-        video={true}
-      >
-        <RoomAudioRenderer/>
-        {/* Render a custom Stage component once connected */}
-        {isConnected && (
-          <div className="">
-            <Stage setConnect={setConnect}/>
-            {/*<ControlBar className="relative w-full" />*/}
+    <div className="flex flex-col w-full min-h-screen h-screen px-12 py-4 bg-base-300 ">
+      <Topbar/>
+      {
+        isConnected ? (
+          <LiveKitRoom
+            room={room}
+            token={token}
+            serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
+            connect={connect}
+            onConnected={() => setIsConnected(true)}
+            onDisconnected={handleDisconnect}
+            audio={true}
+            video={true}
+            className=""
+          >
+            <div className="h-full grid grid-cols-8 gap-6 bg-white rounded-2xl px-8 py-2 items-stretch">
+              <div className="flex flex-col col-span-5">
+                {/* Render a custom Stage component once connected */}
+                {/*{isConnected && (*/}
+
+                <RoomAudioRenderer/>
+                <div>
+                  <Stage setConnect={setConnect}/>
+                  {/*<ControlBar className="relative w-full" />*/}
+                </div>
+
+
+                <div className="">
+                  <input className="input input-bordered mr-2 text-black" disabled
+                         value={`http://localhost:3000/room?room=${roomName}`}/>
+                  <button className="btn btn-primary top-0 right-0" onClick={() => {
+                    navigator.clipboard.writeText(`http://localhost:3000/room?room=${roomName}`)
+                  }}>Invite
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative col-span-3 h-full">
+                <Chatbox/>
+              </div>
+            </div>
+          </LiveKitRoom>
+        ) : (
+          <div className="w-full h-full flex justify-center items-center">
+            <button className="btn btn-primary mb-4" onClick={() => {
+              setConnect(true);
+              setIsConnected(true);
+            }}>
+              Connect <FaBolt/>
+            </button>
           </div>
-        )}
-      </LiveKitRoom>
-      <div className="">
-      <input className="input input-bordered mr-2 text-black" disabled value={`http://localhost:3000/room?room=${roomName}`}/>
-      <button className="btn btn-primary top-0 right-0" onClick={() => {navigator.clipboard.writeText(`http://localhost:3000/room?room=${roomName}`)}}>Invite</button>
-      </div>
+        )
+      }
+
     </div>
   );
 };
 
-export function Stage({setConnect}) {
+interface StageProps {
+  setConnect :  (value: (((prevState: boolean) => boolean) | boolean)) => void
+}
+
+export const Stage : FC<StageProps> = ({setConnect}) => {
   const tracks = useTracks([
     {source: Track.Source.Camera, withPlaceholder: true},
     // {source: Track.Source.ScreenShare, withPlaceholder: false},
@@ -203,33 +226,46 @@ export function Stage({setConnect}) {
   console.log(tracks)
   return (
     <>
-      <div className="bg-white">
-        <GridLayout className="" tracks={tracks}>
-          <TrackContext.Consumer>
-            {(track) =>
-              track && (
-
-                <div className="">
-                  <div className="relative">
-                    <div className="w-16 h-16 absolute top-0 right-0 z-10"><AudioVisualizer
-                      participant={track.participant}/>
-                    </div>
-                    <VideoTrack {...track} />
+      <div className="relative mb-2">
+        {/*<GridLayout className="" tracks={tracks}>*/}
+        {/*  <TrackContext.Consumer>*/}
+        {tracks.map((track, index) =>
+            track.participant instanceof LocalParticipant && (
+              <div key={index} className="">
+                <div className="relative">
+                  <div className="w-16 h-16 absolute top-0 right-0 z-10"><AudioVisualizer
+                    participant={track.participant}/>
                   </div>
-                  <div className="flex justify-center relative">
-                  </div>
+                  <VideoTrack className="rounded-2xl" {...track} />
                 </div>
-
-              )
-            }
-          </TrackContext.Consumer>
-        </GridLayout>
-        <div className="w-full flex justify-between py-2">
-          <div className="flex">
+                <div className="flex justify-center relative">
+                </div>
+              </div>
+            )
+        )}
+        {/*  </TrackContext.Consumer>*/}
+        {/*</GridLayout>*/}
+        <div className="absolute bottom-0 w-full flex justify-center py-2">
+          <div className="flex justify-center">
             <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
             <SelectMediaDropdown kind="videoinput" source={Track.Source.Camera}/>
           </div>
           <button className="btn btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/></button>
+        </div>
+      </div>
+      <div>
+        <div className="w-full">
+          <div className="carousel carousel-center w-full space-x-4 rounded-box">
+            {tracks.map((track, index) =>
+                track.participant instanceof RemoteParticipant && (
+                  <div key={index} className="carousel-item aspect-video h-32">
+                    <VideoTrack className="rounded-2xl" {...track} />
+                    <div className="flex justify-center relative">
+                    </div>
+                  </div>
+                )
+            )}
+          </div>
         </div>
 
       </div>
@@ -237,9 +273,9 @@ export function Stage({setConnect}) {
   );
 }
 
-RoomPage.getLayout = function useLayout(page: ReactElement) {
-  return <Layout>{page}</Layout>;
-};
+// RoomPage.getLayout = function useLayout(page: ReactElement) {
+//   return <Layout>{page}</Layout>;
+// };
 
 
 export default RoomPage

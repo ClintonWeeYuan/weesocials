@@ -63,10 +63,10 @@ const SelectMediaDropdown: FC<Props> = ({
   return (
     <>
       <div className="mr-4 flex">
-        <button type="button" className="btn rounded-r-none" onClick={buttonProps.onClick ? buttonProps.onClick : () => {
+        <button type="button" className="btn glass rounded-r-none" onClick={buttonProps.onClick ? buttonProps.onClick : () => {
         }}>{enabled ? enabledIcon : disabledIcon}</button>
         <div className="dropdown">
-          <label tabIndex={0} className="btn rounded-l-none"><FaChevronDown className="text-lg"/></label>
+          <label tabIndex={0} className="btn glass rounded-l-none"><FaChevronDown className="text-lg"/></label>
           <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
             {devices.map((device) => (
               <li

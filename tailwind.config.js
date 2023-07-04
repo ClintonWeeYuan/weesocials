@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      gridTemplateRows: {
+        // Simple 8 row grid
+        '8': 'repeat(8, minmax(0, 1fr))',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
