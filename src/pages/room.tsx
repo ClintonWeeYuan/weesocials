@@ -16,6 +16,7 @@ import SelectMediaDropdown from "@/src/components/SelectMediaDropdown";
 import {LuLogOut} from "react-icons/lu"
 import Topbar from "@/src/components/room/Topbar";
 import Chatbox from "@/src/components/room/Chatbox"
+import {getBaseUrl} from "@/src/utils";
 
 const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
@@ -185,9 +186,9 @@ const RoomPage: NextPageWithLayout = () => {
 
                 <div className="">
                   <input className="input input-bordered mr-2 text-black" disabled
-                         value={`http://localhost:3000/room?room=${roomName}`}/>
+                         value={`http://localhost:3000/waiting?room=${roomName}`}/>
                   <button className="btn btn-primary top-0 right-0" onClick={() => {
-                    navigator.clipboard.writeText(`http://localhost:3000/room?room=${roomName}`)
+                    navigator.clipboard.writeText(`${getBaseUrl()}/waiting?room=${roomName}`)
                   }}>Invite
                   </button>
                 </div>
