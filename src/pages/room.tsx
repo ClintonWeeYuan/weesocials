@@ -187,7 +187,7 @@ const RoomPage: NextPageWithLayout = () => {
 
                 <div className="">
                   <input className="input input-bordered mr-2 text-black" disabled
-                         value={`http://localhost:3000/waiting?room=${roomName}`}/>
+                         value={`${getBaseUrl()}/waiting?room=${roomName}`}/>
                   <button className="btn btn-primary top-0 right-0" onClick={() => {
                     navigator.clipboard.writeText(`${getBaseUrl()}/waiting?room=${roomName}`)
                   }}>Invite
@@ -200,15 +200,16 @@ const RoomPage: NextPageWithLayout = () => {
               </div>
 
               {/* You can open the modal using ID.showModal() method */}
-              <div className="absolute bottom-2 w-full flex justify-center">
-                <button className="btn btn-primary btn-circle btn-lg" onClick={()=>window.my_modal_3.showModal()}><HiChatBubbleLeftRight/></button>
+              <div className="md:hidden absolute bottom-2 w-full flex justify-center">
+                <label htmlFor="my_modal_6" className="btn btn-primary btn-circle btn-lg"><HiChatBubbleLeftRight/></label>
               </div>
-              <dialog id="my_modal_3" className="modal">
-                <form method="dialog" className="modal-box bg-base-300 h-full">
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-20">✕</button>
+              <input type="checkbox" id="my_modal_6" className="modal-toggle" />
+              <div className="modal">
+                <div className="modal-box h-full bg-base-300">
+                  <label htmlFor="my_modal_6" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-20">✕</label>
                   <Sidebar/>
-                </form>
-              </dialog>
+                </div>
+              </div>
             </div>
           </LiveKitRoom>
         ) : (
