@@ -33,6 +33,12 @@ const RoomPage: NextPageWithLayout = () => {
     },
   });
 
+  //Get base url
+  const origin =
+    typeof window !== 'undefined' && window.location.origin
+      ? window.location.origin
+      : '';
+
   // state to pass onto room
   const [url, setUrl] = useState(storedUrl);
 
@@ -187,9 +193,9 @@ const RoomPage: NextPageWithLayout = () => {
 
                 <div className="">
                   <input className="input input-bordered mr-2 text-black" disabled
-                         value={`${getBaseUrl()}/waiting?room=${roomName}`}/>
+                         value={`${origin}/waiting?room=${roomName}`}/>
                   <button className="btn btn-primary top-0 right-0" onClick={() => {
-                    navigator.clipboard.writeText(`${getBaseUrl()}/waiting?room=${roomName}`)
+                    navigator.clipboard.writeText(`${origin}/waiting?room=${roomName}`)
                   }}>Invite
                   </button>
                 </div>
