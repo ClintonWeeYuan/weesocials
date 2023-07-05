@@ -156,7 +156,7 @@ const RoomPage: NextPageWithLayout = () => {
 
 
   return (
-    <div className="flex flex-col w-full min-h-screen h-screen px-12 py-4 bg-base-300 ">
+    <div className="flex flex-col w-full min-h-screen h-screen px-2 md:px-12 py-4 bg-base-300 ">
       <Topbar/>
       {
         isConnected ? (
@@ -171,8 +171,8 @@ const RoomPage: NextPageWithLayout = () => {
             video={true}
             className=""
           >
-            <div className="h-full grid grid-cols-8 gap-6 bg-white rounded-2xl px-8 py-2 items-stretch">
-              <div className="flex flex-col col-span-5">
+            <div className="h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2 items-stretch">
+              <div className="flex flex-col md:col-span-5">
                 {/* Render a custom Stage component once connected */}
                 {/*{isConnected && (*/}
 
@@ -193,7 +193,7 @@ const RoomPage: NextPageWithLayout = () => {
                 </div>
               </div>
 
-              <div className="relative col-span-3 h-full">
+              <div className="hidden md:block relative col-span-3 h-full">
                 <Chatbox/>
               </div>
             </div>
@@ -250,7 +250,7 @@ export const Stage : FC<StageProps> = ({setConnect}) => {
             <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
             <SelectMediaDropdown kind="videoinput" source={Track.Source.Camera}/>
           </div>
-          <button className="btn btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/></button>
+          <button className="btn btn-sm md:btn-md btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/></button>
         </div>
       </div>
       <div>
