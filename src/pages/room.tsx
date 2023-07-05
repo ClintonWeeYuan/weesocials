@@ -15,8 +15,9 @@ import {NextPageWithLayout} from "@/src/pages/_app";
 import SelectMediaDropdown from "@/src/components/SelectMediaDropdown";
 import {LuLogOut} from "react-icons/lu"
 import Topbar from "@/src/components/room/Topbar";
-import Chatbox from "@/src/components/room/Chatbox"
+import Sidebar from "@/src/components/room/Sidebar"
 import {getBaseUrl} from "@/src/utils";
+import {HiChatBubbleLeftRight} from "react-icons/hi2"
 
 const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
@@ -172,7 +173,7 @@ const RoomPage: NextPageWithLayout = () => {
             video={true}
             className=""
           >
-            <div className="h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2 items-stretch">
+            <div className="relative h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2 items-stretch">
               <div className="flex flex-col md:col-span-5">
                 {/* Render a custom Stage component once connected */}
                 {/*{isConnected && (*/}
@@ -195,8 +196,19 @@ const RoomPage: NextPageWithLayout = () => {
               </div>
 
               <div className="hidden md:block relative col-span-3 h-full">
-                <Chatbox/>
+                <Sidebar/>
               </div>
+
+              {/* You can open the modal using ID.showModal() method */}
+              <div className="absolute bottom-2 w-full flex justify-center">
+                <button className="btn btn-primary btn-circle btn-lg" onClick={()=>window.my_modal_3.showModal()}><HiChatBubbleLeftRight/></button>
+              </div>
+              <dialog id="my_modal_3" className="modal">
+                <form method="dialog" className="modal-box bg-base-300 h-full">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-20">✕</button>
+                  <Sidebar/>
+                </form>
+              </dialog>
             </div>
           </LiveKitRoom>
         ) : (
