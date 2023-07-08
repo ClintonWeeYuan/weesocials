@@ -11,6 +11,7 @@ const Chatbox : FC  = () => {
 
 
   async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
     console.log(message)
     if (message && message.trim() !== '') {
       if (send) {
@@ -31,12 +32,12 @@ const Chatbox : FC  = () => {
           </div>
         ))}
       </div>
-      <div className="relative">
+      <form onSubmit={handleSubmit} className="relative">
         <input value={message} onChange={(e) => setMessage(e.currentTarget.value)}
                placeholder="Type message here..." className="input w-full"/>
-        <button type="button" onClick={handleSubmit} className="absolute top-0 right-2 btn btn-circle btn-md btn-primary"><BsFillSendFill/>
+        <button type="submit" className="absolute top-0 right-2 btn btn-circle btn-md btn-primary"><BsFillSendFill/>
         </button>
-      </div>
+      </form>
     </>
   )
 }

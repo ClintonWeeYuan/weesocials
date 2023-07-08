@@ -16,8 +16,9 @@ import SelectMediaDropdown from "@/src/components/SelectMediaDropdown";
 import {LuLogOut} from "react-icons/lu"
 import Topbar from "@/src/components/room/Topbar";
 import Sidebar from "@/src/components/room/Sidebar"
-import {getBaseUrl} from "@/src/utils";
 import {HiChatBubbleLeftRight} from "react-icons/hi2"
+import {AnimatePresence, motion} from "framer-motion";
+import Modal from "@/src/components/modal/Modal";
 
 const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
@@ -53,6 +54,11 @@ const RoomPage: NextPageWithLayout = () => {
 
   // disable connect button unless validated
   const [connectDisabled, setConnectDisabled] = useState(true);
+
+  //Control Modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
 
   useEffect(() => {
@@ -100,15 +106,6 @@ const RoomPage: NextPageWithLayout = () => {
     if (videoTrack) {
       videoTrack.stop();
     }
-
-    // if (
-    //   window.location.protocol === 'https:' &&
-    //   url.startsWith('ws://') &&
-    //   !url.startsWith('ws://localhost')
-    // ) {
-    //   alert('Unable to connect to insecure websocket from https');
-    //   return;
-    // }
 
     const params: { [key: string]: string } = {
       url,
@@ -179,7 +176,8 @@ const RoomPage: NextPageWithLayout = () => {
             video={true}
             className=""
           >
-            <div className="relative h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2 items-stretch">
+            <div
+              className="relative h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2 items-stretch">
               <div className="flex flex-col md:col-span-5">
                 {/* Render a custom Stage component once connected */}
                 {/*{isConnected && (*/}
@@ -205,17 +203,18 @@ const RoomPage: NextPageWithLayout = () => {
                 <Sidebar/>
               </div>
 
-              {/* You can open the modal using ID.showModal() method */}
-              <div className="md:hidden absolute bottom-2 w-full flex justify-center">
-                <label htmlFor="my_modal_6" className="btn btn-primary btn-circle btn-lg"><HiChatBubbleLeftRight/></label>
+              {/*Modal */}
+              <div className="md:hidden flex w-full justify-center absolute bottom-2">
+                <motion.button whileHover={{scale: 1.1}}
+                               whileTap={{scale: 0.9}}
+                               className="btn btn-primary btn-circle"
+                               onClick={() => setModalOpen(!modalOpen)}
+                               type="button"
+                ><HiChatBubbleLeftRight/></motion.button>
               </div>
-              <input type="checkbox" id="my_modal_6" className="modal-toggle" />
-              <div className="modal">
-                <div className="modal-box h-full bg-base-300">
-                  <label htmlFor="my_modal_6" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-20">✕</label>
-                  <Sidebar/>
-                </div>
-              </div>
+              <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+                {modalOpen && <Modal modalOpen={modalOpen} handleClose={closeModal}><Sidebar/></Modal>}
+              </AnimatePresence>
             </div>
           </LiveKitRoom>
         ) : (
@@ -235,10 +234,10 @@ const RoomPage: NextPageWithLayout = () => {
 };
 
 interface StageProps {
-  setConnect :  (value: (((prevState: boolean) => boolean) | boolean)) => void
+  setConnect: (value: (((prevState: boolean) => boolean) | boolean)) => void
 }
 
-export const Stage : FC<StageProps> = ({setConnect}) => {
+export const Stage: FC<StageProps> = ({setConnect}) => {
   const tracks = useTracks([
     {source: Track.Source.Camera, withPlaceholder: true},
     // {source: Track.Source.ScreenShare, withPlaceholder: false},
@@ -270,7 +269,8 @@ export const Stage : FC<StageProps> = ({setConnect}) => {
             <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
             <SelectMediaDropdown kind="videoinput" source={Track.Source.Camera}/>
           </div>
-          <button className="btn btn-sm md:btn-md btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/></button>
+          <button className="btn btn-sm md:btn-md btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/>
+          </button>
         </div>
       </div>
       <div>
