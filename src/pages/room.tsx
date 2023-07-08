@@ -243,12 +243,9 @@ export const Stage: FC<StageProps> = ({setConnect}) => {
     {source: Track.Source.Camera, withPlaceholder: true},
     // {source: Track.Source.ScreenShare, withPlaceholder: false},
   ]);
-  console.log(tracks)
   return (
     <>
       <div className="relative mb-2">
-        {/*<GridLayout className="" tracks={tracks}>*/}
-        {/*  <TrackContext.Consumer>*/}
         {tracks.map((track, index) =>
             track.participant instanceof LocalParticipant && (
               <div key={index} className="">
@@ -263,8 +260,6 @@ export const Stage: FC<StageProps> = ({setConnect}) => {
               </div>
             )
         )}
-        {/*  </TrackContext.Consumer>*/}
-        {/*</GridLayout>*/}
         <div className="absolute bottom-0 w-full flex justify-center py-2">
           <div className="flex justify-center">
             <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
