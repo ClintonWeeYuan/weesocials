@@ -1,25 +1,17 @@
-import {
-  AudioVisualizer,
-  LiveKitRoom,
-  RoomAudioRenderer,
-  useToken,
-  useTracks,
-  VideoTrack
-} from '@livekit/components-react';
-import {createLocalVideoTrack, LocalParticipant, LocalVideoTrack, RemoteParticipant, Room, Track} from 'livekit-client';
-import {FC, ReactElement, useEffect, useState} from 'react';
+import {LiveKitRoom, RoomAudioRenderer, useToken} from '@livekit/components-react';
+import {createLocalVideoTrack, LocalVideoTrack, Room} from 'livekit-client';
+import {ReactElement, useEffect, useState} from 'react';
 import {VideoRenderer} from '@livekit/react-core';
 import '@livekit/components-styles';
 import {FaBolt} from "react-icons/fa";
 import {NextPageWithLayout} from "@/src/pages/_app";
-import SelectMediaDropdown from "@/src/components/SelectMediaDropdown";
-import {LuLogOut} from "react-icons/lu"
 import Topbar from "@/src/components/room/Topbar";
 import Sidebar from "@/src/components/room/Sidebar"
 import {HiChatBubbleLeftRight} from "react-icons/hi2"
 import {AnimatePresence, motion} from "framer-motion";
 import Modal from "@/src/components/modal/Modal";
 import Layout from "@/src/components/Layout";
+import Stage from "@/src/components/room/Stage";
 
 const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
@@ -69,39 +61,6 @@ const RoomPage: NextPageWithLayout = () => {
       setConnectDisabled(true);
     }
   }, [token, url]);
-
-  const toggleVideo = async () => {
-    if (videoTrack) {
-      videoTrack.stop();
-      setVideoEnabled(false);
-      setVideoTrack(undefined);
-    } else {
-      const track = await createLocalVideoTrack({
-        deviceId: videoDevice?.deviceId,
-      });
-      setVideoEnabled(true);
-      setVideoTrack(track);
-    }
-  };
-
-  const toggleAudio = () => {
-    if (audioEnabled) {
-      setAudioEnabled(false);
-    } else {
-      setAudioEnabled(true);
-    }
-  };
-
-  const selectVideoDevice = (device: MediaDeviceInfo) => {
-    setVideoDevice(device);
-    if (videoTrack) {
-      if (videoTrack.mediaStreamTrack.getSettings().deviceId === device.deviceId) {
-        return;
-      }
-      // stop video
-      videoTrack.stop();
-    }
-  };
 
   const connectToRoom = async () => {
     if (videoTrack) {
@@ -178,18 +137,12 @@ const RoomPage: NextPageWithLayout = () => {
             className=""
           >
             <div
-              className="relative h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2 items-stretch">
-              <div className="flex flex-col md:col-span-5">
-                {/* Render a custom Stage component once connected */}
-                {/*{isConnected && (*/}
-
+              className="relative h-full md:grid md:grid-cols-8 md:gap-6 bg-white rounded-2xl px-2 md:px-8 py-2">
+              <div className="md:col-span-5">
                 <RoomAudioRenderer/>
                 <div>
                   <Stage setConnect={setConnect}/>
-                  {/*<ControlBar className="relative w-full" />*/}
                 </div>
-
-
                 <div className="">
                   <input className="input input-bordered mr-2 text-black" disabled
                          value={`${origin}/waiting?room=${roomName}`}/>
@@ -209,9 +162,11 @@ const RoomPage: NextPageWithLayout = () => {
                 <motion.button whileHover={{scale: 1.1}}
                                whileTap={{scale: 0.9}}
                                className="btn btn-primary btn-circle"
-                               onClick={() => setModalOpen(!modalOpen)}
+                               onClick={openModal}
                                type="button"
-                ><HiChatBubbleLeftRight/></motion.button>
+                >
+                  <HiChatBubbleLeftRight/>
+                </motion.button>
               </div>
               <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
                 {modalOpen && <Modal handleClose={closeModal}><Sidebar/></Modal>}
@@ -234,60 +189,6 @@ const RoomPage: NextPageWithLayout = () => {
   );
 };
 
-interface StageProps {
-  setConnect: (value: (((prevState: boolean) => boolean) | boolean)) => void
-}
-
-export const Stage: FC<StageProps> = ({setConnect}) => {
-  const tracks = useTracks([
-    {source: Track.Source.Camera, withPlaceholder: true},
-    // {source: Track.Source.ScreenShare, withPlaceholder: false},
-  ]);
-  return (
-    <>
-      <div className="relative mb-2">
-        {tracks.map((track, index) =>
-            track.participant instanceof LocalParticipant && (
-              <div key={index} className="">
-                <div className="relative">
-                  <div className="w-16 h-16 absolute top-0 right-0 z-10"><AudioVisualizer
-                    participant={track.participant}/>
-                  </div>
-                  <VideoTrack className="rounded-2xl" {...track} />
-                </div>
-                <div className="flex justify-center relative">
-                </div>
-              </div>
-            )
-        )}
-        <div className="absolute bottom-0 w-full flex justify-center py-2">
-          <div className="flex justify-center">
-            <SelectMediaDropdown kind="audioinput" source={Track.Source.Microphone}/>
-            <SelectMediaDropdown kind="videoinput" source={Track.Source.Camera}/>
-          </div>
-          <button className="btn btn-sm md:btn-md btn-error" type="button" onClick={() => setConnect(false)}><LuLogOut/>
-          </button>
-        </div>
-      </div>
-      <div>
-        <div className="w-full">
-          <div className="carousel carousel-center w-full space-x-4 rounded-box">
-            {tracks.map((track, index) =>
-                track.participant instanceof RemoteParticipant && (
-                  <div key={index} className="carousel-item aspect-video h-32">
-                    <VideoTrack className="rounded-2xl" {...track} />
-                    <div className="flex justify-center relative">
-                    </div>
-                  </div>
-                )
-            )}
-          </div>
-        </div>
-
-      </div>
-    </>
-  );
-}
 
 RoomPage.getLayout = function useLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;

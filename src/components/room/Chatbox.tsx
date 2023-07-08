@@ -1,18 +1,19 @@
-import {FC, useState} from "react"
+import {FC, FormEvent, useState} from "react"
 import ChatItem from "@/src/components/room/ChatItem";
 import {LocalParticipant} from "livekit-client";
 import {BsFillSendFill} from "react-icons/bs";
 import {useChat, useRemoteParticipants} from "@livekit/components-react";
+import useChatScroll from "@/src/components/hooks/useChatScroll";
 
 const Chatbox : FC  = () => {
   const {send, chatMessages, isSending} = useChat();
 
   const [message, setMessage] = useState("");
 
+  const ref = useChatScroll(chatMessages);
 
-  async function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    console.log(message)
     if (message && message.trim() !== '') {
       if (send) {
         await send(message);
@@ -24,10 +25,11 @@ const Chatbox : FC  = () => {
 
   return(
     <>
-      <div className="h-5/6 overflow-y-scroll scrollbar">
+      <div ref={ref} className="h-5/6 overflow-y-scroll scrollbar">
         {chatMessages.map((msg, index) => (
-          <div key={index}>
+          <div key={index} className="">
             <ChatItem message={msg.message} sender={msg.from?.name!}
+                      date={msg.timestamp}
                       isLocal={msg.from instanceof LocalParticipant}/>
           </div>
         ))}
