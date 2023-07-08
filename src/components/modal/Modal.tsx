@@ -1,5 +1,6 @@
 import Backdrop from "@/src/components/modal/Backdrop";
 import {motion} from "framer-motion";
+import {FC, ReactNode} from "react";
 
 const dropIn = {
   hidden: {
@@ -22,8 +23,12 @@ const dropIn = {
   },
 };
 
+interface Props {
+  children : ReactNode
+  handleClose : () => void
+}
 
-const Modal = ({ handleClose, text, children }) => {
+const Modal : FC<Props> = ({ handleClose, children }) => {
   return (
     <Backdrop onClick={handleClose}>
       <motion.div

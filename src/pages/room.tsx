@@ -19,6 +19,7 @@ import Sidebar from "@/src/components/room/Sidebar"
 import {HiChatBubbleLeftRight} from "react-icons/hi2"
 import {AnimatePresence, motion} from "framer-motion";
 import Modal from "@/src/components/modal/Modal";
+import Layout from "@/src/components/Layout";
 
 const RoomPage: NextPageWithLayout = () => {
   // initial state from query parameters
@@ -161,7 +162,7 @@ const RoomPage: NextPageWithLayout = () => {
 
 
   return (
-    <div className="flex flex-col w-full min-h-screen h-screen px-2 md:px-12 py-4 bg-base-300 ">
+    <div className="flex flex-col w-full h-screen px-2 md:px-12 py-4 bg-base-300 ">
       <Topbar/>
       {
         isConnected ? (
@@ -213,7 +214,7 @@ const RoomPage: NextPageWithLayout = () => {
                 ><HiChatBubbleLeftRight/></motion.button>
               </div>
               <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
-                {modalOpen && <Modal modalOpen={modalOpen} handleClose={closeModal}><Sidebar/></Modal>}
+                {modalOpen && <Modal handleClose={closeModal}><Sidebar/></Modal>}
               </AnimatePresence>
             </div>
           </LiveKitRoom>
@@ -293,9 +294,9 @@ export const Stage: FC<StageProps> = ({setConnect}) => {
   );
 }
 
-// RoomPage.getLayout = function useLayout(page: ReactElement) {
-//   return <Layout>{page}</Layout>;
-// };
+RoomPage.getLayout = function useLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
 
 
 export default RoomPage
