@@ -2,7 +2,7 @@ import { FC, FormEvent, useState } from 'react';
 import { LocalParticipant } from 'livekit-client';
 import { BsFillSendFill } from 'react-icons/bs';
 import { useChat } from '@livekit/components-react';
-import ChatItem from '@/src/components/room/ChatItem.tsx';
+import ChatItem from '@/src/components/room/ChatItem';
 import useChatScroll from '@/src/components/hooks/useChatScroll';
 
 const Chatbox : FC = () => {
