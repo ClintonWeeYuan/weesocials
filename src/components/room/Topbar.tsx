@@ -1,5 +1,5 @@
-import {FC} from "react"
-import {FaChevronLeft} from "react-icons/fa"
+import { FC } from "react"
+import { FaChevronLeft } from "react-icons/fa"
 
 const Topbar: FC = () => {
 

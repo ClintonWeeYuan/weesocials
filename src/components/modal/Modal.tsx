@@ -1,6 +1,6 @@
 import Backdrop from "@/src/components/modal/Backdrop";
-import {motion} from "framer-motion";
-import {FC, ReactNode} from "react";
+import { motion } from "framer-motion";
+import { FC, ReactNode } from "react";
 
 const dropIn = {
   hidden: {

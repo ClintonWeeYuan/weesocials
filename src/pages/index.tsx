@@ -1,25 +1,7 @@
-import type {NextPage} from 'next';
+import type { NextPage } from 'next';
 import Head from 'next/head';
-import {faker} from '@faker-js/faker';
 import Link from 'next/link';
-import {useState} from "react";
-import { generate, count } from "random-words";
-const EXAMPLE_ROUTES = {
-  minimal: {title: 'Minimal example', href: `/minimal?user=${faker.person.fullName()}`},
-  simple: {title: 'Simple example', href: `/simple?user=${faker.person.fullName()}`},
-  audioOnly: {
-    title: 'Audio only example',
-    href: `/audio-only?user=${faker.person.fullName()}`,
-  },
-  customize: {
-    title: 'Simple example with custom components',
-    href: `/customize?user=${faker.person.fullName()}`,
-  },
-  clubhouse: {
-    title: 'Clubhouse clone build with LiveKit components',
-    href: `/clubhouse?user=${faker.person.fullName()}`,
-  },
-} as const;
+import { generate } from "random-words";
 
 const Home: NextPage = () => {
   const createNewRoomName = () => {

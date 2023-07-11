@@ -1,14 +1,14 @@
-import {FC, FormEvent, useState} from "react"
-import ChatItem from "@/src/components/room/ChatItem";
-import {LocalParticipant} from "livekit-client";
-import {BsFillSendFill} from "react-icons/bs";
-import {useChat, useRemoteParticipants} from "@livekit/components-react";
-import useChatScroll from "@/src/components/hooks/useChatScroll";
+import { FC, FormEvent, useState } from 'react';
+import { LocalParticipant } from 'livekit-client';
+import { BsFillSendFill } from 'react-icons/bs';
+import { useChat } from '@livekit/components-react';
+import ChatItem from '@/src/components/room/ChatItem.tsx';
+import useChatScroll from '@/src/components/hooks/useChatScroll';
 
-const Chatbox : FC  = () => {
-  const {send, chatMessages, isSending} = useChat();
+const Chatbox : FC = () => {
+  const { send, chatMessages } = useChat();
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const ref = useChatScroll(chatMessages);
 
@@ -17,31 +17,39 @@ const Chatbox : FC  = () => {
     if (message && message.trim() !== '') {
       if (send) {
         await send(message);
-        setMessage("");
-        console.log(chatMessages)
+        setMessage('');
+        console.log(chatMessages);
       }
     }
   }
 
-  return(
+  return (
     <>
       <div ref={ref} className="h-5/6 overflow-y-scroll scrollbar">
-        {chatMessages.map((msg, index) => (
-          <div key={index} className="">
-            <ChatItem message={msg.message} sender={msg.from?.name!}
-                      date={msg.timestamp}
-                      isLocal={msg.from instanceof LocalParticipant}/>
+        {chatMessages.map((msg) => (
+          <div key={msg.timestamp} className="">
+            <ChatItem
+              message={msg.message}
+              sender={msg.from?.name ? msg.from.name : ""}
+              date={msg.timestamp}
+              isLocal={msg.from instanceof LocalParticipant}
+            />
           </div>
         ))}
       </div>
       <form onSubmit={handleSubmit} className="relative">
-        <input value={message} onChange={(e) => setMessage(e.currentTarget.value)}
-               placeholder="Type message here..." className="input w-full"/>
-        <button type="submit" className="absolute top-0 right-2 btn btn-circle btn-md btn-primary"><BsFillSendFill/>
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.currentTarget.value)}
+          placeholder="Type message here..."
+          className="input w-full"
+        />
+        <button type="submit" className="absolute top-0 right-2 btn btn-circle btn-md btn-primary">
+          <BsFillSendFill />
         </button>
       </form>
     </>
-  )
-}
+  );
+};
 
-export default Chatbox
+export default Chatbox;

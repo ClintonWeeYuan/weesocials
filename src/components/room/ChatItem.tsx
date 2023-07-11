@@ -1,4 +1,4 @@
-import {FC} from "react"
+import { FC } from "react"
 import hdate from "human-date"
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
   date: number,
 }
 
-const ChatItem: FC<Props> = ({message, sender, isLocal, date}) => {
+const ChatItem: FC<Props> = ({ message, sender, isLocal, date }) => {
   const convertTime = (date: number) => {
     return hdate.relativeTime((date - Date.now()) / 1000);
   }

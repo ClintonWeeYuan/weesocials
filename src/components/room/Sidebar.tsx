@@ -1,5 +1,5 @@
-import {FC, useState} from "react"
-import {motion} from "framer-motion";
+import { FC, useState } from "react"
+import { motion } from "framer-motion";
 import ParticipantList from "@/src/components/room/ParticipantList";
 import Chatbox from "@/src/components/room/Chatbox";
 
@@ -32,8 +32,8 @@ const Sidebar: FC = () => {
 
       {
         isChat ? (
-            <Chatbox/>
-          ) :
+          <Chatbox/>
+        ) :
           <ParticipantList/>
       }
 

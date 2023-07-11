@@ -1,4 +1,4 @@
-import {MutableRefObject, useEffect, useRef} from 'react'
+import { MutableRefObject, useEffect, useRef } from 'react'
 
 function useChatScroll<T>(dep: T): MutableRefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement | null>(null);

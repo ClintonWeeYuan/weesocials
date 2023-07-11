@@ -1,9 +1,9 @@
-import {FC, useEffect} from "react"
-import type {MediaDeviceSelectProps} from "@livekit/components-react";
-import {useMaybeRoomContext, useMediaDeviceSelect, useTrackToggle} from "@livekit/components-react";
-import {FaChevronDown, FaMicrophone, FaVideo, FaVideoSlash} from "react-icons/fa"
-import {PiMicrophoneSlashFill} from "react-icons/pi"
-import type {ToggleSource} from "@livekit/components-core";
+import { FC, useEffect } from "react"
+import type { MediaDeviceSelectProps } from "@livekit/components-react";
+import { useMaybeRoomContext, useMediaDeviceSelect, useTrackToggle } from "@livekit/components-react";
+import { FaChevronDown, FaMicrophone, FaVideo, FaVideoSlash } from "react-icons/fa"
+import { PiMicrophoneSlashFill } from "react-icons/pi"
+import type { ToggleSource } from "@livekit/components-core";
 
 interface Props extends MediaDeviceSelectProps {
   source: ToggleSource,
@@ -12,22 +12,20 @@ interface Props extends MediaDeviceSelectProps {
 }
 
 const SelectMediaDropdown: FC<Props> = ({
-                                          kind,
-                                          source,
-                                          initialSelection,
-                                          onActiveDeviceChange,
-                                          onDeviceListChange,
-                                          onDeviceSelectError,
-                                          exactMatch,
-                                          ...props
-                                        }) => {
+  kind,
+  source,
+  initialSelection,
+  onActiveDeviceChange,
+  onDeviceListChange,
+  onDeviceSelectError,
+}) => {
   const room = useMaybeRoomContext();
-  const {devices, activeDeviceId, setActiveMediaDevice, className} = useMediaDeviceSelect({
+  const { devices, activeDeviceId, setActiveMediaDevice } = useMediaDeviceSelect({
     kind,
     room,
   });
 
-  const {buttonProps, enabled} = useTrackToggle({source})
+  const { buttonProps, enabled } = useTrackToggle({ source })
 
   useEffect(() => {
     if (initialSelection) {
@@ -47,7 +45,7 @@ const SelectMediaDropdown: FC<Props> = ({
 
   const handleActiveDeviceChange = async (deviceId: string) => {
     try {
-      await setActiveMediaDevice(deviceId, {exact: true});
+      await setActiveMediaDevice(deviceId, { exact: true });
     } catch (e) {
       if (e instanceof Error) {
         onDeviceSelectError?.(e);
@@ -77,9 +75,9 @@ const SelectMediaDropdown: FC<Props> = ({
                 aria-selected={device.deviceId === activeDeviceId}
                 role="option"
               >
-              <span className="text-xs" onClick={() => handleActiveDeviceChange(device.deviceId)}>
-                {device.label.substring(0, 40) + "..."}
-              </span>
+                <span className="text-xs" onClick={() => handleActiveDeviceChange(device.deviceId)}>
+                  {device.label.substring(0, 40) + "..."}
+                </span>
               </li>
             ))}
           </ul>

@@ -1,6 +1,5 @@
-import {FC} from "react"
-import {RemoteParticipant} from "livekit-client";
-import {useRemoteParticipants} from "@livekit/components-react";
+import { FC } from "react"
+import { useRemoteParticipants } from "@livekit/components-react";
 
 
 const ParticipantList : FC = () => {
